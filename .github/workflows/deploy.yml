@@ -59,19 +59,22 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             set -e
-            # `su`/non-interactive SSH don't source ~/.bashrc, so nvm never
-            # loads and `node` silently resolves to the old system-wide
-            # /usr/bin/node (v20 — no node:sqlite there at all). Source nvm
-            # explicitly and pin pm2's interpreter to the resolved binary
-            # so this doesn't depend on ambient shell setup ever again.
-            export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            nvm use 22
-            NODE_BIN="$(command -v node)"
-            echo "Using node: $NODE_BIN ($(node -v))"
+            # nvm.sh isn't sourced by su/non-interactive SSH (confirmed: it
+            # doesn't even exist at $NVM_DIR/nvm.sh on this box — CloudPanel
+            # manages Node versions its own way, not via a real nvm install
+            # for the shell). Point straight at the known binary instead of
+            # depending on PATH/nvm resolution at all.
+            NODE_BIN="$HOME/.nvm/versions/node/v22.23.2/bin/node"
+            NPM_BIN="$HOME/.nvm/versions/node/v22.23.2/bin/npm"
+            if [ ! -x "$NODE_BIN" ]; then
+              echo "Expected Node at $NODE_BIN, not found. Installed versions:"
+              ls "$HOME/.nvm/versions/node/" 2>&1 || echo "(no ~/.nvm/versions/node/ at all)"
+              exit 1
+            fi
+            echo "Using node: $NODE_BIN ($("$NODE_BIN" -v))"
 
             cd "${{ env.VPS_PATH }}"
-            npm ci --omit=dev
+            "$NPM_BIN" ci --omit=dev
 
             # Delete + fresh start on every deploy rather than `restart` —
             # restart keeps whatever interpreter/env the process was

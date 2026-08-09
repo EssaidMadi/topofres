@@ -10,8 +10,8 @@ CloudPanel tourne sur le VPS (`srv1313361.hstgr.cloud`, `76.13.114.85`), génér
 2. **Add Site → Node.js**.
 3. Domain: `bestdealsplus.com` (le DNS pointe déjà vers ce VPS, confirmé).
 4. Node.js version : 22.
-5. App port : choisissez-en un (ex. `3000`) — notez-le, `server.ts` lit `process.env.PORT`.
-6. CloudPanel crée un utilisateur système dédié au site (ex. `bestdealsplus`) avec son propre dossier `htdocs/bestdealsplus.com/` — c'est le `DEPLOY_PATH` du secret ci-dessous.
+5. App port : `3012` (3000 est déjà pris par un autre site sur ce VPS) — `server.ts` lit `process.env.PORT`.
+6. CloudPanel crée un utilisateur système dédié au site — chez nous, c'est `admin-essaid`, avec `htdocs/bestdealsplus.com/` comme dossier — c'est le `VPS_PATH` dans `deploy.yml`.
 7. Activez SSL (Let's Encrypt) dans l'onglet du site une fois le domaine vérifié.
 
 ## 2. Créer une clé SSH pour le déploiement
@@ -40,9 +40,12 @@ Puis **supprimez `deploy_key` de votre machine** une fois collée dans GitHub (o
 
 Confirmé le 9 août : l'utilisateur système est `admin-essaid`, le chemin `/home/admin-essaid/htdocs/bestdealsplus.com` (pas `bestdealsplus` comme supposé au départ — CloudPanel avait nommé l'utilisateur d'après le compte, pas le domaine). Port de l'app : `3012` (3000 est déjà pris par un autre site, `admin.arthome.ai`, sur ce même VPS) — à faire correspondre dans CloudPanel → site → Node.js → **App Port**.
 
-⚠️ **nvm + SSH non-interactif** : `su - user -c "..."` et les scripts SSH n'exécutent pas `~/.bashrc`, donc `nvm` ne se charge jamais tout seul et `node` retombe silencieusement sur `/usr/bin/node` (l'ancien Node système, sans `node:sqlite`). `deploy.yml` source `nvm.sh` explicitement et fixe l'interpréteur de pm2 en dur — si vous lancez des commandes Node à la main sur le serveur, faites pareil (`export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" && nvm use 22`) plutôt que de lire `node -v` tel quel. Port de l'app : `3012` (3000 est déjà pris par un autre site, `admin.arthome.ai`, sur ce même VPS) — à faire correspondre dans CloudPanel → site → Node.js → **App Port**.
+⚠️ **Pas de vrai nvm ici** : `$HOME/.nvm/nvm.sh` n'existe pas sur ce VPS — CloudPanel gère les versions Node à sa façon (juste les binaires sous `~/.nvm/versions/node/`), pas via un vrai nvm installé pour le shell. `deploy.yml` pointe donc directement sur `~/.nvm/versions/node/v22.23.2/bin/node` en dur plutôt que de dépendre de `PATH`/`nvm use`. **Si vous changez la version Node du site dans CloudPanel plus tard, mettez à jour ce chemin dans `deploy.yml`** (recherchez `v22.23.2`) — sinon le déploiement échouera avec un message clair ("Expected Node at ... not found") plutôt qu'un crash silencieux.
 
-⚠️ **nvm + SSH non-interactif** : `su - user -c "..."` et les scripts SSH n'exécutent pas `~/.bashrc`, donc `nvm` ne se charge jamais tout seul et `node` retombe silencieusement sur `/usr/bin/node` (l'ancien Node système, sans `node:sqlite`). `deploy.yml` source `nvm.sh` explicitement et fixe l'interpréteur de pm2 en dur — si vous lancez des commandes Node à la main sur le serveur, faites pareil (`export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" && nvm use 22`) plutôt que de lire `node -v` tel quel.
+Pour lancer des commandes Node à la main sur le serveur, même chose — `node -v` tel quel retombe sur `/usr/bin/node` (l'ancien Node système) :
+```bash
+su - admin-essaid -c "\$HOME/.nvm/versions/node/v22.23.2/bin/node -v"
+```
 
 ## 4. pm2 sur le serveur
 
