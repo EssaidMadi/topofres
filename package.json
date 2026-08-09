@@ -1,0 +1,18 @@
+{
+  "name": "topoffres",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Comparateur de deals SaaS qui se fait connaitre tout seul, avec suivi interne de ce qui marche.",
+  "scripts": {
+    "dev": "node --import tsx --watch src/web/server.ts",
+    "build": "tsc",
+    "test": "tsc --noEmit && node --import tsx --test",
+    "lint": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

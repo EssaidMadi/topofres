@@ -1,15 +1,16 @@
 # Tasks: TopOffres (topoffres.fr)
 
-## Tranche 1 — Squelette projet (détaillé, prêt à implémenter)
+## Tranche 1 — Squelette projet ✅ (fait)
 
-- [ ] Task: Initialiser le projet TypeScript + SQLite
-  - Acceptance: `npm install && npm test` tourne sans erreur (même sans test réel encore) ; `npm run dev` démarre un serveur vide
-  - Verify: exécuter les deux commandes
+- [x] Task: Initialiser le projet TypeScript + SQLite
+  - Acceptance: `npm install && npm test` tourne sans erreur ; `npm run dev` démarre un serveur
+  - Verify: `npm test` (2/2 verts), `npm run build`, serveur démarré + `curl localhost:3000` répond
   - Files: package.json, tsconfig.json, src/web/server.ts, .gitignore
+  - Note: SQLite via `node:sqlite` intégré (pas de dépendance native ajoutée) ; test runner en découverte par défaut (`node --test` sans argument dossier — passer un chemin cassait la résolution ESM de tsx sur Windows)
 
-- [ ] Task: Schéma de base (deals, events)
+- [x] Task: Schéma de base (deals, events)
   - Acceptance: la base SQLite se crée automatiquement au démarrage avec les tables `deals` et `events`
-  - Verify: script qui ouvre la base et liste les tables
+  - Verify: src/db/client.test.ts — 2/2 tests verts (tables créées, contrainte unique source+source_id)
   - Files: src/db/schema.ts, src/db/client.ts
 
 ## Tranche 2 — Ingestion Product Hunt (détaillé)
