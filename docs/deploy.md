@@ -59,6 +59,10 @@ npm install -g pm2
 
 Un `git push` sur `main` suffit ensuite. Pour un premier essai sans attendre un commit : GitHub → **Actions → Deploy → Run workflow**.
 
+## Ce que le déploiement ne touche jamais
+
+`rsync --delete` supprime côté serveur tout ce qui n'existe pas dans le repo — `.env`, `prospects.csv`, les logs de cron sont explicitement exclus dans `deploy.yml` pour ça. Si vous ajoutez un autre fichier généré/secret directement sur le serveur, pensez à l'ajouter à la liste `--exclude` du workflow, sinon il disparaît au prochain push.
+
 ## Variables d'environnement en prod
 
 `PRODUCT_HUNT_TOKEN` (voir `.env.example`) doit être défini côté serveur, pas dans le repo — dans CloudPanel, onglet **Node.js → Environment Variables** du site, ou dans un `.env` déposé manuellement dans `DEPLOY_PATH` (le `.gitignore` l'exclut du repo, donc `rsync --delete` ne l'écrasera pas s'il vit déjà sur le serveur).

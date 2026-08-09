@@ -41,10 +41,16 @@ jobs:
       # Ship everything the running app needs except dev-only files —
       # node_modules is reinstalled --omit=dev on the server so native/
       # platform-specific deps (none today, but be safe) match its OS.
+      # --delete removes anything on the server not in this checkout, so
+      # everything server-only (secrets, generated data, cron output) has
+      # to be excluded here or it gets wiped on every deploy.
       - name: Sync files to the VPS
         uses: burnett01/rsync-deployments@7.0.2
         with:
-          switches: -avz --delete --exclude=".git" --exclude="node_modules" --exclude="data"
+          switches: >-
+            -avz --delete
+            --exclude=".git" --exclude="node_modules" --exclude="data"
+            --exclude=".env" --exclude="prospects.csv" --exclude="*.log"
           path: ./
           remote_path: ${{ env.VPS_PATH }}
           remote_host: ${{ env.VPS_HOST }}
