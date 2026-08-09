@@ -38,7 +38,7 @@ Repo `topofres` → **Settings → Secrets and variables → Actions → New rep
 
 Puis **supprimez `deploy_key` de votre machine** une fois collée dans GitHub (ou gardez-la dans un gestionnaire de mots de passe, pas en clair dans un dossier).
 
-⚠️ Si votre site CloudPanel utilise un autre utilisateur système ou un autre chemin que `bestdealsplus` / `/home/bestdealsplus/htdocs/bestdealsplus.com`, éditez `VPS_USER` et `VPS_PATH` en haut de `deploy.yml` avant de lancer le workflow.
+Confirmé le 9 août : l'utilisateur système est `admin-essaid`, le chemin `/home/admin-essaid/htdocs/bestdealsplus.com` (pas `bestdealsplus` comme supposé au départ — CloudPanel avait nommé l'utilisateur d'après le compte, pas le domaine).
 
 ## 4. pm2 sur le serveur
 
