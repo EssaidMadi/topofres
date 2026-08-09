@@ -37,7 +37,12 @@
   - src/scoring/score.ts : 3 signaux pondérés (recency 40%, discount 40%, votes 20%), formule explicite, pas de boîte noire
   - 5 tests verts : deal récent+remise bat deal ancien, décroissance de la fraîcheur à 30j, remise clampée, rendements décroissants sur les votes, jamais de crash sur signaux manquants
   - Pas de champ `votes_count` en base pour l'instant (pas dans le schéma Tranche 1) — le scoring l'accepte mais reçoit `null` tant que l'ingestion ne le stocke pas ; à ajouter si on veut vraiment ce signal
-- [ ] Tranche 4 — Web : page comparateur qui sert les deals classés
+- [x] Tranche 4 — Web ✅ (fait)
+  - src/db/deals-repo.ts : lit la base, mappe vers le format attendu par le scoring
+  - src/web/render.ts : page HTML pure/testable, échappement HTML systématique (titres/descriptions viennent de Product Hunt, source externe non fiable)
+  - src/web/server.ts : sert la page classée sur `/`
+  - 20/20 tests verts (dont un vrai bug de test corrigé : "badge" apparaît toujours dans le CSS, il fallait chercher le markup exact)
+  - Vérifié avec 2 deals réels en base (`data/topoffres.sqlite`, non commité) : le deal frais à -70% passe bien devant le deal ancien sans remise
 - [ ] Tranche 5 — Analytics : capture pageview + clic, stockage interne
 - [ ] Tranche 6 — Analytics : job de conclusions (avec seuil minimal d'échantillon)
 - [ ] Tranche 7 — Content : génération + publication automatique d'articles
