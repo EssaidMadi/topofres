@@ -50,7 +50,11 @@
   - src/web/app.ts : routing extrait de server.ts pour être testable (port éphémère, db en mémoire) ; GET / logue un pageview, GET /out/:id logue un clic puis redirige (302) vers l'URL réelle du deal
   - src/web/render.ts : les liens de deal passent par /out/:id au lieu de l'URL externe directe
   - 24/24 tests verts ; vérifié en vrai avec curl + lecture de la table events
-- [ ] Tranche 6 — Analytics : job de conclusions (avec seuil minimal d'échantillon)
+- [x] Tranche 6 — Analytics : moteur de conclusions ✅ (fait)
+  - src/analytics/conclusions.ts : compare les clics/deal par catégorie à la moyenne du site ; deux garde-fous : MIN_SAMPLE_CLICKS (10, sinon `ready:false`) et MIN_LIFT (20%, sinon une catégorie n'est pas remontée comme "conclusion")
+  - Route interne GET /internal/conclusions (JSON, **pas d'auth pour l'instant** — à revoir avant que le rapport contienne quoi que ce soit de sensible)
+  - 29/29 tests verts, dont une corrélation injectée retrouvée exactement (Analytics 3x plus cliqué que Marketing → repéré, +50% de lift)
+  - Vérifié en vrai : Analytics à 5 clics/deal ressort à +67% au-dessus de la moyenne (3,00), Marketing sous la moyenne n'est pas remonté
 - [ ] Tranche 7 — Content : génération + publication automatique d'articles
 - [ ] Tranche 8 — Growth : export CSV de prospects (aucun envoi automatique)
 - [ ] Tranche 9 — Déploiement VPS Hostinger + DNS topoffres.fr

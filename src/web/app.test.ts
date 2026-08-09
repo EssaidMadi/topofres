@@ -79,6 +79,18 @@ test("GET /out/:id for an unknown deal 404s without recording a click", async ()
   });
 });
 
+test("GET /internal/conclusions returns the conclusions report as JSON", async () => {
+  await withTestServer(async (baseUrl) => {
+    const res = await fetch(baseUrl + "/internal/conclusions");
+    const body = (await res.json()) as { ready: boolean; totalClicks: number };
+
+    assert.equal(res.status, 200);
+    assert.equal(res.headers.get("content-type"), "application/json; charset=utf-8");
+    assert.equal(body.ready, false); // no clicks recorded in this fixture yet
+    assert.equal(body.totalClicks, 0);
+  });
+});
+
 test("an unknown path 404s", async () => {
   await withTestServer(async (baseUrl) => {
     const res = await fetch(baseUrl + "/nonsense");

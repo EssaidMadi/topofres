@@ -2,6 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import type { DatabaseSync } from "node:sqlite";
 import { getAllDeals, getDealById } from "../db/deals-repo.js";
 import { recordEvent } from "../analytics/events-repo.js";
+import { deriveConclusions } from "../analytics/conclusions.js";
 import { rankDeals } from "../scoring/score.js";
 import { renderComparateurPage } from "./render.js";
 
@@ -22,6 +23,16 @@ export function createRequestHandler(db: DatabaseSync) {
       const ranked = rankDeals(getAllDeals(db));
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
       res.end(renderComparateurPage(ranked));
+      return;
+    }
+
+    // No auth on this route yet — fine while nothing sensitive is in the
+    // report, but revisit before it carries anything you wouldn't want a
+    // competitor to see (see tasks/todo.md Tranche 6 note).
+    if (req.method === "GET" && url.pathname === "/internal/conclusions") {
+      const report = deriveConclusions(db);
+      res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify(report, null, 2));
       return;
     }
 
