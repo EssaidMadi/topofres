@@ -13,17 +13,23 @@
   - Verify: src/db/client.test.ts — 2/2 tests verts (tables créées, contrainte unique source+source_id)
   - Files: src/db/schema.ts, src/db/client.ts
 
-## Tranche 2 — Ingestion Product Hunt (détaillé)
+## Tranche 2 — Ingestion Product Hunt ✅ (fait, pas encore testé en vrai)
 
-- [ ] Task: Client API Product Hunt (lecture seule)
+- [x] Task: Client API Product Hunt (lecture seule)
   - Acceptance: appelle l'API Product Hunt et retourne une liste typée de lancements récents
-  - Verify: test avec réponse mockée (pas d'appel réseau réel dans les tests)
-  - Files: src/ingestion/producthunt.ts, src/ingestion/producthunt.test.ts
+  - Verify: 5 tests avec réponse mockée (succès, HTTP non-ok, erreur GraphQL, heuristique de remise, mapping) — verts, aucun appel réseau réel
+  - Files: src/ingestion/producthunt.ts, src/ingestion/producthunt.test.ts, src/ingestion/types.ts
+  - Note: la "remise" est devinée par regex sur le tagline/description (Product Hunt n'a pas de champ deal structuré) — heuristique documentée comme approximative, à revoir avec une 2e source
 
-- [ ] Task: Stockage des deals ingérés
+- [x] Task: Stockage des deals ingérés
   - Acceptance: les deals récupérés sont écrits en base, avec la source et la date de collecte tracées (Boundary "toujours logger la source")
-  - Verify: `npm test` + script manuel qui affiche N deals en base après ingestion
+  - Verify: 3 tests (insertion, ré-ingestion idempotente, source tracée) verts
   - Files: src/ingestion/store.ts, src/ingestion/store.test.ts
+
+- [ ] Task: **Vérification en conditions réelles** — bloquée sur un token Product Hunt
+  - Acceptance: `npm run ingest` avec un vrai `PRODUCT_HUNT_TOKEN` en `.env` stocke de vrais deals en base
+  - Verify: `npm run ingest` affiche "N nouveaux deals stockés"
+  - Files: aucun (juste `.env`, jamais commité)
 
 ## Backlog — tranches 3 à 9 (à découper en détail quand on y arrive)
 

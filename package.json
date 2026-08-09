@@ -6,9 +6,10 @@
   "description": "Comparateur de deals SaaS qui se fait connaitre tout seul, avec suivi interne de ce qui marche.",
   "scripts": {
     "dev": "node --import tsx --watch src/web/server.ts",
-    "build": "tsc",
+    "build": "tsc -p tsconfig.build.json",
     "test": "tsc --noEmit && node --import tsx --test",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "ingest": "node --import tsx src/ingestion/run.ts"
   },
   "devDependencies": {
     "@types/node": "^22.10.5",
