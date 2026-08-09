@@ -6,11 +6,14 @@ on:
   workflow_dispatch: {}
 
 env:
-  # Not secret (the IP is already public via DNS) — edit these two if your
-  # CloudPanel site uses a different system user or path than the default.
+  # Not secret (the IP is already public via DNS) — edit these if your
+  # CloudPanel site uses different values than the ones confirmed on the VPS.
   VPS_HOST: "76.13.114.85"
   VPS_USER: "admin-essaid"
   VPS_PATH: "/home/admin-essaid/htdocs/bestdealsplus.com"
+  # Port 3000 is already taken by another site (admin.arthome.ai) on this
+  # shared VPS — 3012 is the port set in CloudPanel's Node.js app config.
+  APP_PORT: "3012"
 
 jobs:
   test:
@@ -56,7 +59,23 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             set -e
+            # `su`/non-interactive SSH don't source ~/.bashrc, so nvm never
+            # loads and `node` silently resolves to the old system-wide
+            # /usr/bin/node (v20 — no node:sqlite there at all). Source nvm
+            # explicitly and pin pm2's interpreter to the resolved binary
+            # so this doesn't depend on ambient shell setup ever again.
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm use 22
+            NODE_BIN="$(command -v node)"
+            echo "Using node: $NODE_BIN ($(node -v))"
+
             cd "${{ env.VPS_PATH }}"
             npm ci --omit=dev
-            pm2 restart bestdealsplus || pm2 start dist/web/server.js --name bestdealsplus
+
+            # Delete + fresh start on every deploy rather than `restart` —
+            # restart keeps whatever interpreter/env the process was
+            # originally started with, which is exactly what bit us here.
+            pm2 delete bestdealsplus 2>/dev/null || true
+            PORT="${{ env.APP_PORT }}" pm2 start dist/web/server.js --name bestdealsplus --interpreter "$NODE_BIN"
             pm2 save

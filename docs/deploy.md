@@ -38,7 +38,11 @@ Repo `topofres` → **Settings → Secrets and variables → Actions → New rep
 
 Puis **supprimez `deploy_key` de votre machine** une fois collée dans GitHub (ou gardez-la dans un gestionnaire de mots de passe, pas en clair dans un dossier).
 
-Confirmé le 9 août : l'utilisateur système est `admin-essaid`, le chemin `/home/admin-essaid/htdocs/bestdealsplus.com` (pas `bestdealsplus` comme supposé au départ — CloudPanel avait nommé l'utilisateur d'après le compte, pas le domaine).
+Confirmé le 9 août : l'utilisateur système est `admin-essaid`, le chemin `/home/admin-essaid/htdocs/bestdealsplus.com` (pas `bestdealsplus` comme supposé au départ — CloudPanel avait nommé l'utilisateur d'après le compte, pas le domaine). Port de l'app : `3012` (3000 est déjà pris par un autre site, `admin.arthome.ai`, sur ce même VPS) — à faire correspondre dans CloudPanel → site → Node.js → **App Port**.
+
+⚠️ **nvm + SSH non-interactif** : `su - user -c "..."` et les scripts SSH n'exécutent pas `~/.bashrc`, donc `nvm` ne se charge jamais tout seul et `node` retombe silencieusement sur `/usr/bin/node` (l'ancien Node système, sans `node:sqlite`). `deploy.yml` source `nvm.sh` explicitement et fixe l'interpréteur de pm2 en dur — si vous lancez des commandes Node à la main sur le serveur, faites pareil (`export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" && nvm use 22`) plutôt que de lire `node -v` tel quel. Port de l'app : `3012` (3000 est déjà pris par un autre site, `admin.arthome.ai`, sur ce même VPS) — à faire correspondre dans CloudPanel → site → Node.js → **App Port**.
+
+⚠️ **nvm + SSH non-interactif** : `su - user -c "..."` et les scripts SSH n'exécutent pas `~/.bashrc`, donc `nvm` ne se charge jamais tout seul et `node` retombe silencieusement sur `/usr/bin/node` (l'ancien Node système, sans `node:sqlite`). `deploy.yml` source `nvm.sh` explicitement et fixe l'interpréteur de pm2 en dur — si vous lancez des commandes Node à la main sur le serveur, faites pareil (`export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" && nvm use 22`) plutôt que de lire `node -v` tel quel.
 
 ## 4. pm2 sur le serveur
 

@@ -61,4 +61,4 @@
   - .github/workflows/deploy.yml : teste → build → rsync vers le VPS → `npm ci --omit=dev` → restart pm2. Ne déploie jamais si les tests échouent.
   - package.json : ajout du script `start`
   - docs/deploy.md : checklist manuelle (création du site CloudPanel, clé SSH, secrets GitHub) — **je ne l'ai pas fait moi-même** : pas d'accès CloudPanel, et je ne génère/attache pas de clé SSH ou de mot de passe serveur moi-même (identifiants + réglages d'accès = à vous de le faire)
-  - **Bloqué sur vous** : suivre docs/deploy.md pour voir le site en ligne pour de vrai
+  - Débogage réel du premier déploiement (9 août) : mauvais utilisateur système, `authorized_keys` vide, port 3000 déjà pris par un autre site, et `nvm` qui ne se charge pas en SSH non-interactif → `node` retombait sur l'ancien Node système sans `node:sqlite`. Tout corrigé dans deploy.yml + docs/deploy.md.
