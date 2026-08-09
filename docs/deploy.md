@@ -26,18 +26,19 @@ ssh-keygen -t ed25519 -f ./deploy_key -N "" -C "github-actions-deploy"
 
 Dans CloudPanel : onglet du site → **SSH/SFTP** (ou **File Manager**) → ajoutez le contenu de `deploy_key.pub` aux clés autorisées de l'utilisateur système du site. Vérifiez que le login SSH est activé pour cet utilisateur.
 
-## 3. Ajouter les secrets dans GitHub
+## 3. Ajouter le secret dans GitHub
+
+Seule la clé privée est un secret — l'hôte, l'utilisateur et le chemin sont en dur dans `.github/workflows/deploy.yml` (`env:` en haut du fichier), pas besoin de les répéter dans GitHub.
 
 Repo `topofres` → **Settings → Secrets and variables → Actions → New repository secret** :
 
 | Secret | Valeur |
 |---|---|
-| `DEPLOY_HOST` | `76.13.114.85` |
-| `DEPLOY_USER` | l'utilisateur système CloudPanel du site (ex. `bestdealsplus`) |
-| `DEPLOY_PATH` | le chemin du site, ex. `/home/bestdealsplus/htdocs/bestdealsplus.com` |
-| `DEPLOY_SSH_KEY` | contenu **complet** de `deploy_key` (la clé privée) |
+| `VPS_SSH_KEY` | contenu **complet** de `deploy_key` (la clé privée) |
 
 Puis **supprimez `deploy_key` de votre machine** une fois collée dans GitHub (ou gardez-la dans un gestionnaire de mots de passe, pas en clair dans un dossier).
+
+⚠️ Si votre site CloudPanel utilise un autre utilisateur système ou un autre chemin que `bestdealsplus` / `/home/bestdealsplus/htdocs/bestdealsplus.com`, éditez `VPS_USER` et `VPS_PATH` en haut de `deploy.yml` avant de lancer le workflow.
 
 ## 4. pm2 sur le serveur
 
