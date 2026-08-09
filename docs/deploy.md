@@ -59,6 +59,27 @@ npm install -g pm2
 
 Un `git push` sur `main` suffit ensuite. Pour un premier essai sans attendre un commit : GitHub → **Actions → Deploy → Run workflow**.
 
+## 6. Cron : ingestion + publication automatiques
+
+Sans ça, `npm run ingest`/`publish` restent des commandes qu'on lance à la main — pas vraiment "automatique". En root sur le VPS :
+
+```bash
+crontab -u admin-essaid -e
+```
+
+Puis ajoutez (remplacez le token) :
+
+```cron
+0 6 * * * cd /home/admin-essaid/htdocs/bestdealsplus.com && PRODUCT_HUNT_TOKEN="..." /home/admin-essaid/.nvm/versions/node/v22.23.2/bin/node dist/ingestion/run.js >> cron.log 2>&1
+15 6 * * * cd /home/admin-essaid/htdocs/bestdealsplus.com && /home/admin-essaid/.nvm/versions/node/v22.23.2/bin/node dist/content/run.js >> cron.log 2>&1
+```
+
+Publication 15 minutes après l'ingestion, pour laisser le temps aux nouveaux deals d'être en base avant que l'article du jour ne soit généré.
+
+Notez : on appelle `dist/.../run.js` directement (le JS compilé), pas `npm run ingest`/`publish` — ces scripts npm utilisent `tsx` pour exécuter le TypeScript, et `tsx` est une devDependency que `npm ci --omit=dev` n'installe pas en prod. Le binaire Node est le même chemin en dur que dans `deploy.yml`, pour la même raison (pas de vrai nvm sur ce serveur).
+
+Sans token, `dist/ingestion/run.js` s'arrête proprement avec un message d'erreur dans `cron.log` (pas de crash, pas de base corrompue) — le cron peut être posé avant d'avoir le token, il ne fera juste rien tant qu'il n'est pas rempli.
+
 ## Ce que le déploiement ne touche jamais
 
 `rsync --delete` supprime côté serveur tout ce qui n'existe pas dans le repo — `.env`, `prospects.csv`, les logs de cron sont explicitement exclus dans `deploy.yml` pour ça. Si vous ajoutez un autre fichier généré/secret directement sur le serveur, pensez à l'ajouter à la liste `--exclude` du workflow, sinon il disparaît au prochain push.
