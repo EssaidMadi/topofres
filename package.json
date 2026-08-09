@@ -6,6 +6,7 @@
   "description": "SaaS deals comparator that markets itself, with internal tracking on what actually drives traffic.",
   "scripts": {
     "dev": "node --import tsx --watch src/web/server.ts",
+    "start": "node dist/web/server.js",
     "build": "tsc -p tsconfig.build.json",
     "test": "tsc --noEmit && node --import tsx --test",
     "lint": "tsc --noEmit",

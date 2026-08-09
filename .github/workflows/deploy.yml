@@ -1,0 +1,55 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.20"
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.20"
+      - run: npm ci
+      - run: npm run build
+
+      # Ship everything the running app needs except dev-only files —
+      # node_modules is reinstalled --omit=dev on the server so native/
+      # platform-specific deps (none today, but be safe) match its OS.
+      - name: Sync files to the VPS
+        uses: burnett01/rsync-deployments@7.0.2
+        with:
+          switches: -avz --delete --exclude=".git" --exclude="node_modules" --exclude="data"
+          path: ./
+          remote_path: ${{ secrets.DEPLOY_PATH }}
+          remote_host: ${{ secrets.DEPLOY_HOST }}
+          remote_user: ${{ secrets.DEPLOY_USER }}
+          remote_key: ${{ secrets.DEPLOY_SSH_KEY }}
+
+      - name: Install prod deps and restart the app
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            set -e
+            cd "${{ secrets.DEPLOY_PATH }}"
+            npm ci --omit=dev
+            pm2 restart bestdealsplus || pm2 start dist/web/server.js --name bestdealsplus
+            pm2 save

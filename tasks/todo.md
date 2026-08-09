@@ -57,4 +57,8 @@
   - Vérifié en vrai : Analytics à 5 clics/deal ressort à +67% au-dessus de la moyenne (3,00), Marketing sous la moyenne n'est pas remonté
 - [ ] Tranche 7 — Content : génération + publication automatique d'articles
 - [ ] Tranche 8 — Growth : export CSV de prospects (aucun envoi automatique)
-- [ ] Tranche 9 — Déploiement VPS Hostinger + DNS topoffres.fr
+- [x] Tranche 9 — Déploiement automatique — **pipeline fait, avancée à la demande avant 7/8**
+  - .github/workflows/deploy.yml : teste → build → rsync vers le VPS → `npm ci --omit=dev` → restart pm2. Ne déploie jamais si les tests échouent.
+  - package.json : ajout du script `start`
+  - docs/deploy.md : checklist manuelle (création du site CloudPanel, clé SSH, secrets GitHub) — **je ne l'ai pas fait moi-même** : pas d'accès CloudPanel, et je ne génère/attache pas de clé SSH ou de mot de passe serveur moi-même (identifiants + réglages d'accès = à vous de le faire)
+  - **Bloqué sur vous** : suivre docs/deploy.md pour voir le site en ligne pour de vrai
