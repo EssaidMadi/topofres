@@ -4,6 +4,7 @@ import { createServer } from "node:http";
 import type { DatabaseSync } from "node:sqlite";
 import { openDb } from "../db/client.js";
 import { storeDeals } from "../ingestion/store.js";
+import { saveArticle } from "../content/articles-repo.js";
 import { createRequestHandler } from "./app.js";
 
 async function withTestServer(
@@ -88,6 +89,51 @@ test("GET /internal/conclusions returns the conclusions report as JSON", async (
     assert.equal(res.headers.get("content-type"), "application/json; charset=utf-8");
     assert.equal(body.ready, false); // no clicks recorded in this fixture yet
     assert.equal(body.totalClicks, 0);
+  });
+});
+
+test("GET /blog lists published articles and records a pageview", async () => {
+  await withTestServer(async (baseUrl, db) => {
+    saveArticle(db, {
+      slug: "top-deals-2026-08-09",
+      title: "This week's top SaaS deals",
+      bodyHtml: "<p>...</p>",
+      category: null,
+    });
+
+    const res = await fetch(baseUrl + "/blog");
+    const html = await res.text();
+
+    assert.equal(res.status, 200);
+    assert.ok(html.includes("This week&#39;s top SaaS deals") || html.includes("This week's top SaaS deals"));
+    assert.equal(countEvents(db, "pageview"), 1);
+  });
+});
+
+test("GET /blog/:slug serves the article and tracks it separately from the homepage", async () => {
+  await withTestServer(async (baseUrl, db) => {
+    saveArticle(db, {
+      slug: "top-deals-2026-08-09",
+      title: "This week's top SaaS deals",
+      bodyHtml: "<p>Real content here</p>",
+      category: null,
+    });
+
+    const res = await fetch(baseUrl + "/blog/top-deals-2026-08-09");
+    const html = await res.text();
+
+    assert.equal(res.status, 200);
+    assert.ok(html.includes("Real content here"));
+
+    const event = db.prepare("SELECT target FROM events WHERE type = 'pageview'").get() as { target: string };
+    assert.equal(event.target, "/blog/top-deals-2026-08-09");
+  });
+});
+
+test("GET /blog/:slug 404s for an unknown article", async () => {
+  await withTestServer(async (baseUrl) => {
+    const res = await fetch(baseUrl + "/blog/does-not-exist");
+    assert.equal(res.status, 404);
   });
 });
 

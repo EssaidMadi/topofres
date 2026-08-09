@@ -5,8 +5,11 @@ import { recordEvent } from "../analytics/events-repo.js";
 import { deriveConclusions } from "../analytics/conclusions.js";
 import { rankDeals } from "../scoring/score.js";
 import { renderComparateurPage } from "./render.js";
+import { getAllArticles, getArticleBySlug } from "../content/articles-repo.js";
+import { renderArticlePage, renderBlogIndex } from "../content/render.js";
 
 const OUT_PATH = /^\/out\/(\d+)$/;
+const ARTICLE_PATH = /^\/blog\/([a-z0-9-]+)$/;
 
 /**
  * All routing lives here, decoupled from the process-level `listen()` call
@@ -33,6 +36,30 @@ export function createRequestHandler(db: DatabaseSync) {
       const report = deriveConclusions(db);
       res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
       res.end(JSON.stringify(report, null, 2));
+      return;
+    }
+
+    if (req.method === "GET" && url.pathname === "/blog") {
+      recordEvent(db, { type: "pageview", target: "/blog", referrer });
+      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+      res.end(renderBlogIndex(getAllArticles(db)));
+      return;
+    }
+
+    const articleMatch = url.pathname.match(ARTICLE_PATH);
+    if (req.method === "GET" && articleMatch) {
+      const article = getArticleBySlug(db, articleMatch[1]!);
+      if (!article) {
+        res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+        res.end("Article not found");
+        return;
+      }
+      // Tracked with its own path as target, so /internal/conclusions-style
+      // analysis can later tell articles apart from the homepage and from
+      // each other — the other half of "which article brings traffic".
+      recordEvent(db, { type: "pageview", target: url.pathname, referrer });
+      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+      res.end(renderArticlePage(article));
       return;
     }
 

@@ -10,7 +10,8 @@
     "build": "tsc -p tsconfig.build.json",
     "test": "tsc --noEmit && node --import tsx --test",
     "lint": "tsc --noEmit",
-    "ingest": "node --import tsx src/ingestion/run.ts"
+    "ingest": "node --import tsx src/ingestion/run.ts",
+    "publish": "node --import tsx src/content/run.ts"
   },
   "devDependencies": {
     "@types/node": "^22.10.5",

@@ -55,7 +55,11 @@
   - Route interne GET /internal/conclusions (JSON, **pas d'auth pour l'instant** — à revoir avant que le rapport contienne quoi que ce soit de sensible)
   - 29/29 tests verts, dont une corrélation injectée retrouvée exactement (Analytics 3x plus cliqué que Marketing → repéré, +50% de lift)
   - Vérifié en vrai : Analytics à 5 clics/deal ressort à +67% au-dessus de la moyenne (3,00), Marketing sous la moyenne n'est pas remonté
-- [ ] Tranche 7 — Content : génération + publication automatique d'articles
+- [x] Tranche 7 — Content ✅ (fait, gabarit — pas de LLM)
+  - src/content/generate.ts : gabarit déterministe, deux formes — spotlight sur la catégorie gagnante (avec la vraie conclusion de la Tranche 6) si dispo, sinon top 3 générique. Aucun chiffre inventé, tout vient du scoring/conclusions.
+  - src/content/articles-repo.ts, render.ts, run.ts (`npm run publish`)
+  - Routes /blog et /blog/:slug, trackées séparément de la page d'accueil (target = le chemin exact)
+  - 41/41 tests verts ; vérifié en vrai : corrélation Analytics de la Tranche 6 retrouvée, article publié avec le bon texte/chiffre, pageviews de l'article bien distincts de ceux de l'accueil
 - [ ] Tranche 8 — Growth : export CSV de prospects (aucun envoi automatique)
 - [x] Tranche 9 — Déploiement automatique — **pipeline fait, avancée à la demande avant 7/8**
   - .github/workflows/deploy.yml : teste → build → rsync vers le VPS → `npm ci --omit=dev` → restart pm2. Ne déploie jamais si les tests échouent.
