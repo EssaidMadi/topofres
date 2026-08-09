@@ -33,7 +33,10 @@
 
 ## Backlog — tranches 3 à 9 (à découper en détail quand on y arrive)
 
-- [ ] Tranche 3 — Scoring : fonction pure de classement des deals + tests sur cas connus
+- [x] Tranche 3 — Scoring ✅ (fait)
+  - src/scoring/score.ts : 3 signaux pondérés (recency 40%, discount 40%, votes 20%), formule explicite, pas de boîte noire
+  - 5 tests verts : deal récent+remise bat deal ancien, décroissance de la fraîcheur à 30j, remise clampée, rendements décroissants sur les votes, jamais de crash sur signaux manquants
+  - Pas de champ `votes_count` en base pour l'instant (pas dans le schéma Tranche 1) — le scoring l'accepte mais reçoit `null` tant que l'ingestion ne le stocke pas ; à ajouter si on veut vraiment ce signal
 - [ ] Tranche 4 — Web : page comparateur qui sert les deals classés
 - [ ] Tranche 5 — Analytics : capture pageview + clic, stockage interne
 - [ ] Tranche 6 — Analytics : job de conclusions (avec seuil minimal d'échantillon)
