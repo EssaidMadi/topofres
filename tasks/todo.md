@@ -45,7 +45,11 @@
   - src/web/server.ts : sert la page classée sur `/`
   - 20/20 tests verts (dont un vrai bug de test corrigé : "badge" apparaît toujours dans le CSS, il fallait chercher le markup exact)
   - Vérifié avec 2 deals réels en base (`data/topoffres.sqlite`, non commité) : le deal frais à -70% passe bien devant le deal ancien sans remise
-- [ ] Tranche 5 — Analytics : capture pageview + clic, stockage interne
+- [x] Tranche 5 — Analytics : capture d'événements ✅ (fait)
+  - src/analytics/events-repo.ts : recordEvent, pas d'IP/user-agent capturés (minimal par défaut)
+  - src/web/app.ts : routing extrait de server.ts pour être testable (port éphémère, db en mémoire) ; GET / logue un pageview, GET /out/:id logue un clic puis redirige (302) vers l'URL réelle du deal
+  - src/web/render.ts : les liens de deal passent par /out/:id au lieu de l'URL externe directe
+  - 24/24 tests verts ; vérifié en vrai avec curl + lecture de la table events
 - [ ] Tranche 6 — Analytics : job de conclusions (avec seuil minimal d'échantillon)
 - [ ] Tranche 7 — Content : génération + publication automatique d'articles
 - [ ] Tranche 8 — Growth : export CSV de prospects (aucun envoi automatique)

@@ -27,7 +27,7 @@ function dealCard(deal: StoredDeal & Scored, now: Date): string {
   return `
     <li class="deal">
       <div class="deal-head">
-        <a class="deal-title" href="${escapeHtml(deal.url)}" rel="nofollow noopener" target="_blank">${escapeHtml(deal.title)}</a>
+        <a class="deal-title" href="/out/${deal.id}" rel="nofollow noopener" target="_blank">${escapeHtml(deal.title)}</a>
         ${discountBadge}
       </div>
       ${deal.description ? `<p class="deal-desc">${escapeHtml(deal.description)}</p>` : ""}

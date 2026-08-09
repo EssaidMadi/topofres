@@ -22,13 +22,8 @@ interface DealRow {
   collected_at: string;
 }
 
-/** All deals, newest-collected first (ranking/ordering for display happens in scoring). */
-export function getAllDeals(db: DatabaseSync): StoredDeal[] {
-  const rows = db
-    .prepare("SELECT * FROM deals ORDER BY collected_at DESC")
-    .all() as unknown as DealRow[];
-
-  return rows.map((row) => ({
+function mapRow(row: DealRow): StoredDeal {
+  return {
     id: row.id,
     source: row.source,
     title: row.title,
@@ -39,5 +34,19 @@ export function getAllDeals(db: DatabaseSync): StoredDeal[] {
     launchedAt: row.launched_at,
     collectedAt: row.collected_at,
     votesCount: null, // not stored yet — see Tranche 3 note in tasks/todo.md
-  }));
+  };
+}
+
+/** All deals, newest-collected first (ranking/ordering for display happens in scoring). */
+export function getAllDeals(db: DatabaseSync): StoredDeal[] {
+  const rows = db
+    .prepare("SELECT * FROM deals ORDER BY collected_at DESC")
+    .all() as unknown as DealRow[];
+  return rows.map(mapRow);
+}
+
+/** Used by the /out/:id click-tracking redirect — null if the id doesn't exist. */
+export function getDealById(db: DatabaseSync, id: number): StoredDeal | null {
+  const row = db.prepare("SELECT * FROM deals WHERE id = ?").get(id) as DealRow | undefined;
+  return row ? mapRow(row) : null;
 }
