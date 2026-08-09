@@ -60,7 +60,14 @@
   - src/content/articles-repo.ts, render.ts, run.ts (`npm run publish`)
   - Routes /blog et /blog/:slug, trackées séparément de la page d'accueil (target = le chemin exact)
   - 41/41 tests verts ; vérifié en vrai : corrélation Analytics de la Tranche 6 retrouvée, article publié avec le bon texte/chiffre, pageviews de l'article bien distincts de ceux de l'accueil
-- [ ] Tranche 8 — Growth : export CSV de prospects (aucun envoi automatique)
+- [x] Tranche 8 — Growth ✅ (fait)
+  - src/growth/prospects.ts : les prospects = les SaaS déjà présents dans `deals` (déjà mis en avant gratuitement, angle d'approche naturel : partenariat/backlink)
+  - src/growth/csv.ts : écriture CSV maison (échappement virgule/guillemet/retour à la ligne), zéro dépendance
+  - `npm run export:prospects` (fichier local, gitignored) + route `GET /internal/prospects.csv` (téléchargement direct depuis le site déployé)
+  - 51/51 tests verts ; vérifié en vrai : fichier propre généré + route HTTP avec les bons en-têtes (`Content-Disposition: attachment`)
+  - Aucun envoi automatique nulle part — juste un export à relire avant de contacter qui que ce soit à la main
+
+**Les 8 tranches du plan initial sont faites.** Reste en Open Questions (spec.md) : modèle de monétisation, canal d'outreach définitif, marché FR (dépôt séparé, pas commencé).
 - [x] Tranche 9 — Déploiement automatique — **pipeline fait, avancée à la demande avant 7/8**
   - .github/workflows/deploy.yml : teste → build → rsync vers le VPS → `npm ci --omit=dev` → restart pm2. Ne déploie jamais si les tests échouent.
   - package.json : ajout du script `start`

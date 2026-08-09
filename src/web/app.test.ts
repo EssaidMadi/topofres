@@ -137,6 +137,19 @@ test("GET /blog/:slug 404s for an unknown article", async () => {
   });
 });
 
+test("GET /internal/prospects.csv exports deals as a downloadable CSV, nothing sent anywhere", async () => {
+  await withTestServer(async (baseUrl) => {
+    const res = await fetch(baseUrl + "/internal/prospects.csv");
+    const csv = await res.text();
+
+    assert.equal(res.status, 200);
+    assert.equal(res.headers.get("content-type"), "text/csv; charset=utf-8");
+    assert.match(res.headers.get("content-disposition") ?? "", /attachment/);
+    assert.ok(csv.startsWith("company,category,dealUrl"));
+    assert.ok(csv.includes("Acme Analytics"));
+  });
+});
+
 test("an unknown path 404s", async () => {
   await withTestServer(async (baseUrl) => {
     const res = await fetch(baseUrl + "/nonsense");

@@ -7,6 +7,8 @@ import { rankDeals } from "../scoring/score.js";
 import { renderComparateurPage } from "./render.js";
 import { getAllArticles, getArticleBySlug } from "../content/articles-repo.js";
 import { renderArticlePage, renderBlogIndex } from "../content/render.js";
+import { buildProspectList } from "../growth/prospects.js";
+import { toCsv } from "../growth/csv.js";
 
 const OUT_PATH = /^\/out\/(\d+)$/;
 const ARTICLE_PATH = /^\/blog\/([a-z0-9-]+)$/;
@@ -60,6 +62,18 @@ export function createRequestHandler(db: DatabaseSync) {
       recordEvent(db, { type: "pageview", target: url.pathname, referrer });
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
       res.end(renderArticlePage(article));
+      return;
+    }
+
+    // Same no-auth caveat as /internal/conclusions — a download, nothing
+    // is ever sent from here. Revisit auth before this is public long-term.
+    if (req.method === "GET" && url.pathname === "/internal/prospects.csv") {
+      const csv = toCsv(buildProspectList(getAllDeals(db)));
+      res.writeHead(200, {
+        "Content-Type": "text/csv; charset=utf-8",
+        "Content-Disposition": 'attachment; filename="prospects.csv"',
+      });
+      res.end(csv);
       return;
     }
 

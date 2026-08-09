@@ -11,7 +11,8 @@
     "test": "tsc --noEmit && node --import tsx --test",
     "lint": "tsc --noEmit",
     "ingest": "node --import tsx src/ingestion/run.ts",
-    "publish": "node --import tsx src/content/run.ts"
+    "publish": "node --import tsx src/content/run.ts",
+    "export:prospects": "node --import tsx src/growth/run.ts"
   },
   "devDependencies": {
     "@types/node": "^22.10.5",
