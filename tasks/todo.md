@@ -1,4 +1,6 @@
-# Tasks: TopOffres (topoffres.fr)
+# Tasks: BestDealsPlus (bestdealsplus.com)
+
+> **Pivot du 9 août** : domaine principal → bestdealsplus.com, produit en anglais. topoffres.fr/marché FR devient un futur dépôt séparé (voir spec.md Open Questions). Tranches 1 à 4 ci-dessous ont été faites sous l'ancien nom (topoffres.fr, UI en français) puis rebrandées sans recoder la logique — seuls les libellés visibles ont changé.
 
 ## Tranche 1 — Squelette projet ✅ (fait)
 

@@ -1,7 +1,7 @@
-# topoffres.fr
+# bestdealsplus.com
 
-Comparateur de deals SaaS qui se fait connaître tout seul : contenu SEO auto-publié + suivi interne pour comprendre ce qui ramène du trafic.
+A SaaS deals comparator that markets itself: auto-published SEO content, plus internal tracking to understand what actually drives traffic.
 
-Voir [spec.md](spec.md) pour l'objectif complet, [tasks/plan.md](tasks/plan.md) pour le découpage technique, et [tasks/todo.md](tasks/todo.md) pour l'avancement tâche par tâche.
+See [spec.md](spec.md) for the full objective, [tasks/plan.md](tasks/plan.md) for the technical breakdown, and [tasks/todo.md](tasks/todo.md) for task-by-task progress. Working docs stay in French (that's how this project is run); the product itself is in English.
 
-Construit avec les skills [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) — spec avant code, tranches testées, revue avant expédition.
+Built with the [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) skills — spec before code, tested slices, review before ship.

@@ -18,7 +18,7 @@ function daysAgo(iso: string, now: Date): number {
 
 function dealCard(deal: StoredDeal & Scored, now: Date): string {
   const age = daysAgo(deal.launchedAt ?? deal.collectedAt, now);
-  const ageLabel = age === 0 ? "aujourd'hui" : age === 1 ? "hier" : `il y a ${age} jours`;
+  const ageLabel = age === 0 ? "today" : age === 1 ? "yesterday" : `${age} days ago`;
   const discountBadge =
     deal.discountPercent != null
       ? `<span class="badge">-${escapeHtml(String(deal.discountPercent))}%</span>`
@@ -43,14 +43,14 @@ export function renderComparateurPage(rankedDeals: Array<StoredDeal & Scored>, n
   const body =
     rankedDeals.length > 0
       ? `<ol class="deals">${rankedDeals.map((d) => dealCard(d, now)).join("")}</ol>`
-      : `<p class="empty">Aucun deal pour l'instant — l'ingestion n'a pas encore tourné.</p>`;
+      : `<p class="empty">No deals yet — ingestion hasn't run.</p>`;
 
   return `<!doctype html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TopOffres — les meilleurs deals SaaS, classés en direct</title>
+<title>BestDealsPlus — the best SaaS deals, ranked live</title>
 <style>
   :root { color-scheme: light dark; }
   body {
@@ -76,8 +76,8 @@ export function renderComparateurPage(rankedDeals: Array<StoredDeal & Scored>, n
 </head>
 <body>
 <header>
-  <h1>TopOffres</h1>
-  <p>Deals SaaS classés en direct — remise, fraîcheur, popularité. Pas de liste figée.</p>
+  <h1>BestDealsPlus</h1>
+  <p>SaaS deals ranked live — discount, freshness, popularity. Not a static list.</p>
 </header>
 ${body}
 </body>

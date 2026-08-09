@@ -1,9 +1,9 @@
 {
-  "name": "topoffres",
+  "name": "bestdealsplus",
   "version": "0.0.1",
   "private": true,
   "type": "module",
-  "description": "Comparateur de deals SaaS qui se fait connaitre tout seul, avec suivi interne de ce qui marche.",
+  "description": "SaaS deals comparator that markets itself, with internal tracking on what actually drives traffic.",
   "scripts": {
     "dev": "node --import tsx --watch src/web/server.ts",
     "build": "tsc -p tsconfig.build.json",

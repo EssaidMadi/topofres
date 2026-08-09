@@ -45,7 +45,7 @@ test("shows the highest-ranked deal first", () => {
 
 test("shows an empty state instead of a blank list", () => {
   const html = renderComparateurPage([], NOW);
-  assert.ok(html.includes("Aucun deal pour l'instant"));
+  assert.ok(html.includes("No deals yet"));
   assert.ok(!html.includes("<ol"));
 });
 

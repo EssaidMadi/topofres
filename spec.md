@@ -1,4 +1,6 @@
-# Spec: TopOffres (topoffres.fr)
+# Spec: BestDealsPlus (bestdealsplus.com)
+
+> **Pivot du 9 août** : le domaine principal passe de topoffres.fr à bestdealsplus.com — marché international/anglophone. topoffres.fr est mis de côté ; un site pour le marché français se fera **dans un dépôt séparé**, plus tard (pas une refonte de celui-ci). Le contenu produit (UI, articles) passe en anglais ; cette doc de travail reste en français.
 
 ## Objective
 Un comparateur de deals SaaS qui se fait connaître tout seul, et qui apprend de ce qui marche.
@@ -55,7 +57,8 @@ TypeScript strict, fonctions pures pour tout ce qui touche au scoring et à l'an
 - Aucun message n'est envoyé à un tiers sans un clic de validation humain explicite.
 
 ## Open Questions
-- ~~Nom + domaine~~ → **topoffres.fr**, acheté chez **GoDaddy** (pas encore pointé vers le VPS Hostinger — pas d'accès API GoDaddy ici, donc DNS à changer manuellement ou domaine à transférer vers Hostinger, au choix, au moment du `/ship`).
+- ~~Nom + domaine~~ → **bestdealsplus.com**, DNS déjà pointé vers le VPS Hostinger (76.13.114.85), confirmé le 9 août. (topoffres.fr reste acheté chez GoDaddy mais n'est plus utilisé par ce dépôt.)
 - ~~Source de deals #1~~ → **Product Hunt** (API publique, lancements SaaS avec souvent un deal de lancement). D'autres sources s'ajoutent après la première tranche.
 - Modèle de monétisation : affiliation sur les deals, freemium sur le dashboard, autre ?
 - Canal d'outreach assisté à privilégier une fois le contenu en place (export email, export LinkedIn, autre) ?
+- **Nouveau** : domaine et dépôt du site marché français — pas encore choisis, à traiter comme un projet séparé quand on y sera (ne pas mélanger avec ce dépôt).
